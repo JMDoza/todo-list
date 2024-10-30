@@ -8,4 +8,20 @@ function validateDueDate(dueDate) {
   }
 }
 
-export { validateDueDate };
+function validateTodoListDuplication(todoLists, listName) {
+  if (todoLists[listName]) {
+    throw new Error("Todo list already exists");
+  }
+}
+
+function validateTodoListExistence(todoLists, listName) {
+  if (!todoLists[listName]) {
+    throw new Error("Todo list does not exist");
+  }
+}
+
+export {
+  validateDueDate,
+  validateTodoListDuplication,
+  validateTodoListExistence,
+};

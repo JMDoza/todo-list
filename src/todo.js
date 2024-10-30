@@ -1,5 +1,9 @@
-import { parseISO } from "date-fns";
-import { validateDueDate } from "./todoValidator";
+import { parseISO, format } from "date-fns";
+import {
+  validateDueDate,
+  validateTodoListDuplication,
+  validateTodoListExistence,
+} from "./todoValidator";
 
 function createTodoItem({
   title,
@@ -52,13 +56,9 @@ function createTodoItem({
 function createTodoList(listData) {
   let todoList = [];
 
-  const addTodo = (todoData) => {
-    todoList.push(createTodoItem(todoData));
-  };
+  const addTodo = (todoData) => todoList.push(createTodoItem(todoData));
 
-  const getTodoList = () => {
-    return todoList;
-  };
+  const getTodoList = () => todoList;
 
   if (listData) {
     listData.forEach((todoData) => {
@@ -66,7 +66,33 @@ function createTodoList(listData) {
     });
   }
 
-  return { addTodo, getTodoList };
+  return { addTodo, getTodoList, createTodoList };
 }
 
-export { createTodoList };
+function createTodoListManager() {
+  let todoLists = {};
+
+  const getTodoLists = () => todoLists;
+
+  const getTodoList = (listName) => todoLists[listName]?.getTodoList() || [];
+
+  const addTodoList = (listName, listData) => {
+    validateTodoListDuplication(todoLists, listName);
+    todoLists[listName] = createTodoList(listData);
+  };
+
+  const addTodoToList = (listName, todoData) => {
+    validateTodoListExistence(todoLists, listName);
+
+    todoLists[listName].addTodo(todoData);
+  };
+
+  return {
+    getTodoLists,
+    getTodoList,
+    addTodoList,
+    addTodoToList,
+  };
+}
+
+export { createTodoListManager };

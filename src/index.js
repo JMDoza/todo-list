@@ -1,4 +1,3 @@
-import { createTodoList } from "./todo";
 import { renderTodoList } from "./render";
 
 const listData = [
