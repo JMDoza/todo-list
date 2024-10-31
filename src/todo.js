@@ -89,11 +89,21 @@ function createTodoListManager() {
     todoLists.get(listName).addTodo(todoData);
   };
 
+  const getTodoFromList = (listName, todoIndex) => {
+    return getTodoList(listName)[todoIndex];
+  };
+
+  const toggleStatusOfTodoFromList = (listName, todoIndex) => {
+    getTodoFromList(listName, todoIndex).toggleStatus();
+  };
+
   return {
     getTodoLists,
     getTodoList,
     addTodoList,
     addTodoToList,
+    getTodoFromList,
+    toggleStatusOfTodoFromList,
   };
 }
 

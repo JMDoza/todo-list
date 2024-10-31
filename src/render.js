@@ -2,15 +2,20 @@ import { createTodoListManager } from "./todo";
 import { createElement, appendChildren } from "./domUtils";
 
 const todoListManager = createTodoListManager();
+const checkboxBlankSVG = `<svg class="check-box-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>checkbox-blank</title><path d="M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3Z" /></svg>`;
+const checkboxSVG = `<svg class="check-box-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>checkbox-marked</title><path d="M10,17L5,12L6.41,10.58L10,14.17L17.59,6.58L19,8M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3Z" /></svg>`;
 
 function renderTodoList(listData) {
   // getTodoLists, getTodoList, addTodoList, addTodoToList
   const content = document.getElementById("content");
+  content.innerHTML = "";
 
-  todoListManager.addTodoList("List 1", listData);
-  todoListManager.addTodoList("List 2", listData);
+  const plusBox = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>plus-box</title><path d="M17,13H13V17H11V13H7V11H11V7H13V11H17M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3Z" /></svg>`;
 
-  console.log(todoListManager.getTodoLists());
+  if (listData) {
+    todoListManager.addTodoList("List 1", listData);
+    todoListManager.addTodoList("List 2", listData);
+  }
 
   const todoLists = todoListManager.getTodoLists();
   for (const [key, todoList] of todoLists) {
@@ -18,6 +23,7 @@ function renderTodoList(listData) {
     console.log(todoList);
 
     const todoListElement = createElement("div", "todo-list-container");
+    const plusboxElement = createElement("div", "plus-box");
     const todoListTitle = createElement("h2", "", todoList.getListName());
     const todoItemsContainer = createElement("div", "todo-items-container");
 
@@ -29,14 +35,19 @@ function renderTodoList(listData) {
     });
 
     todoListElement.dataset.list = key;
-    appendChildren(todoListElement, todoListTitle, todoItemsContainer);
+    plusboxElement.innerHTML = plusBox;
+    appendChildren(
+      todoListElement,
+      todoListTitle,
+      plusboxElement,
+      todoItemsContainer
+    );
+    addCreateNewTodoEventListener(plusboxElement);
     appendChildren(content, todoListElement);
   }
 }
 
 function renderTodoItem(todoItem) {
-  const checkboxBlankSVG = `<svg class="check-box-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>checkbox-blank</title><path d="M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3Z" /></svg>`;
-
   const todoItemElement = createElement("div", "todo-item");
   const checkboxElement = createElement("div", "check-box");
   const todoInfoElement = createElement("div", "todo-information");
@@ -44,7 +55,10 @@ function renderTodoItem(todoItem) {
   const todoItemTitleElement = createElement("h4", "", todoItem.getTitle());
   const todoItemDescElement = createElement("p", "", todoItem.getDesc());
 
-  checkboxElement.innerHTML = checkboxBlankSVG;
+  checkboxElement.innerHTML = todoItem.getStatus()
+    ? checkboxSVG
+    : checkboxBlankSVG;
+
   addToggleStatusEventListener(checkboxElement);
   appendChildren(todoInfoElement, todoItemTitleElement, todoItemDescElement);
   appendChildren(todoItemElement, checkboxElement, todoInfoElement);
@@ -53,9 +67,6 @@ function renderTodoItem(todoItem) {
 }
 
 function addToggleStatusEventListener(element) {
-  const checkboxSVG = `<svg class="check-box-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>checkbox-marked</title><path d="M10,17L5,12L6.41,10.58L10,14.17L17.59,6.58L19,8M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3Z" /></svg>`;
-  const checkboxBlankSVG = `<svg class="check-box-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>checkbox-blank</title><path d="M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3Z" /></svg>`;
-
   element.addEventListener("click", (event) => {
     const todoListElement = event.currentTarget.closest("[data-list]");
     const todoItemElement = event.currentTarget.closest("[data-todo-item]");
@@ -71,6 +82,21 @@ function addToggleStatusEventListener(element) {
       .getStatus()
       ? checkboxSVG
       : checkboxBlankSVG;
+  });
+}
+
+function addCreateNewTodoEventListener(element) {
+  element.addEventListener("click", (event) => {
+    const todoListElement = event.currentTarget.closest("[data-list]");
+
+    const todoList = todoListElement.dataset.list;
+    console.log(todoListManager.getTodoList(todoList));
+    todoListManager.addTodoToList(todoList, {
+      title: "Task 6",
+      desc: "This is my 6th Task!",
+    });
+
+    renderTodoList();
   });
 }
 
