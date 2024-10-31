@@ -13,14 +13,37 @@
     />
   </head>
   <body>
-    <div id="overlay"></div>
-    <div id="customDialog">
-      <input type="text" placeholder="New Player Name" />
-      <button data-player="1">Save</button>
+    <div id="overlay" class="hide"></div>
+    <div id="newTodoDialog" class="hide">
+      <h1>New To Do</h1>
+      <form id="newTodoForm" action="post">
+        <input type="hidden" id="listNameForm" name="listName" value="" />
+        <input
+          type="text"
+          name="title"
+          id="titleForm"
+          placeholder="Title"
+          required
+        />
+        <input
+          type="text"
+          name="desc"
+          id="descForm"
+          placeholder="Description"
+        />
+        <input
+          type="number"
+          name="priority"
+          id="priorityForm"
+          placeholder="0"
+        />
+        <input type="date" name="date" id="dateForm" />
+        <button type="submit"><strong>Add To Do</strong></button>
+      </form>
     </div>
     <div class="container">
       <header>
-        <h1>Todo Lists</h1>
+        <h1>Projects List</h1>
         <svg
           id="plus-box-multiple"
           xmlns="http://www.w3.org/2000/svg"

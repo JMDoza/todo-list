@@ -20,4 +20,8 @@ function appendChildren(parent, ...children) {
   children.forEach((child) => parent.appendChild(child));
 }
 
-export { createElement, appendChildren };
+function toggleElementDisplayBlock(element) {
+  element.classList.toggle("hide");
+}
+
+export { createElement, appendChildren, toggleElementDisplayBlock };

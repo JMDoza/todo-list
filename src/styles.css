@@ -90,6 +90,10 @@ header > h1 {
   height: 50px;
 }
 
+.checked {
+  fill: rgba(0, 255, 0, 0.74);
+}
+
 .todo-information {
   flex: 1;
   display: grid;
@@ -107,20 +111,16 @@ header > h1 {
   margin: 0;
 }
 
-#customDialog {
-  display: none;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  padding: 20px;
-  background: white;
-  border: 1px solid #ddd;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
+.menu-open {
+  margin-right: 10px;
 }
+
+.menu-open > svg {
+  fill: white;
+  height: 42px;
+}
+
 #overlay {
-  display: none;
   position: fixed;
   top: 0;
   left: 0;
@@ -128,4 +128,48 @@ header > h1 {
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
   z-index: 500;
+}
+
+#newTodoDialog {
+  position: fixed;
+  width: 250px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  background: #334155;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+.hide {
+  display: none;
+}
+
+#newTodoDialog > h1 {
+  margin: 0;
+  margin-bottom: 16px;
+  border-bottom: 2px solid white;
+}
+
+#newTodoDialog > form {
+  display: grid;
+  justify-items: center;
+  row-gap: 10px;
+}
+
+input {
+  height: 20px;
+  width: 100%;
+  border-radius: 6px;
+  padding-left: 12px;
+}
+
+form > button {
+  height: 32px;
+  width: 120px;
+  background-color: white;
+  font-size: 16px;
+  border-radius: 10px;
 }
