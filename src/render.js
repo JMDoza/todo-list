@@ -29,8 +29,7 @@ function renderTodoList(listData) {
 
     const todoItems = todoList.getTodoList();
     todoItems.forEach((todoItem, index) => {
-      const todoItemElement = renderTodoItem(todoItem);
-      todoItemElement.dataset.todoItem = index;
+      const todoItemElement = renderTodoItem(todoItem, index);
       appendChildren(todoItemsContainer, todoItemElement);
     });
 
@@ -47,7 +46,7 @@ function renderTodoList(listData) {
   }
 }
 
-function renderTodoItem(todoItem) {
+function renderTodoItem(todoItem, index) {
   const todoItemElement = createElement("div", "todo-item");
   const checkboxElement = createElement("div", "check-box");
   const todoInfoElement = createElement("div", "todo-information");
@@ -59,6 +58,7 @@ function renderTodoItem(todoItem) {
     ? checkboxSVG
     : checkboxBlankSVG;
 
+  todoItemElement.dataset.todoItem = index;
   addToggleStatusEventListener(checkboxElement);
   appendChildren(todoInfoElement, todoItemTitleElement, todoItemDescElement);
   appendChildren(todoItemElement, checkboxElement, todoInfoElement);
@@ -88,15 +88,25 @@ function addToggleStatusEventListener(element) {
 function addCreateNewTodoEventListener(element) {
   element.addEventListener("click", (event) => {
     const todoListElement = event.currentTarget.closest("[data-list]");
+    const todoItemsElement = event.currentTarget.nextElementSibling;
 
-    const todoList = todoListElement.dataset.list;
-    console.log(todoListManager.getTodoList(todoList));
-    todoListManager.addTodoToList(todoList, {
+    const dummyTodo = {
       title: "Task 6",
       desc: "This is my 6th Task!",
-    });
+    };
 
-    renderTodoList();
+    const todoListKey = todoListElement.dataset.list;
+
+    todoListManager.addTodoToList(todoListKey, dummyTodo);
+    const todoList = todoListManager.getTodoList(todoListKey);
+    const todoListLastIndex = todoList.length - 1;
+
+    const newTodo = renderTodoItem(
+      todoList[todoListLastIndex],
+      todoListLastIndex
+    );
+
+    appendChildren(todoItemsElement, newTodo);
   });
 }
 
