@@ -96,6 +96,10 @@ function createTodoListManager() {
     }
   };
 
+  const removeTodoFromList = (listName, todoItem) => {
+    getTodoList(listName).splice(todoItem, 1);
+  };
+
   const getTodoFromList = (listName, todoIndex) => {
     return getTodoList(listName)[todoIndex];
   };
@@ -109,6 +113,7 @@ function createTodoListManager() {
     getTodoList,
     addTodoList,
     addTodoToList,
+    removeTodoFromList,
     getTodoFromList,
     toggleStatusOfTodoFromList,
   };

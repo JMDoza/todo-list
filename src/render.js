@@ -1,8 +1,10 @@
 import { createTodoListManager } from "./todo";
+import { format } from "date-fns";
 import {
   createElement,
   appendChildren,
   toggleElementDisplayBlock,
+  toggleElementDisplayGrid,
 } from "./domUtils";
 
 const todoListManager = createTodoListManager();
@@ -12,8 +14,8 @@ const plusBox = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><ti
 const menuOpen = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>menu-open</title><path d="M21,15.61L19.59,17L14.58,12L19.59,7L21,8.39L17.44,12L21,15.61M3,6H16V8H3V6M3,13V11H13V13H3M3,18V16H16V18H3Z" /></svg>`;
 
 function renderTodoLists(listData) {
-  // getTodoLists, getTodoList, addTodoList, addTodoToList
   const content = document.getElementById("content");
+
   content.innerHTML = "";
 
   if (listData) {
@@ -28,8 +30,6 @@ function renderTodoLists(listData) {
 }
 
 function renderTodoList(key, todoList) {
-  console.log(todoList);
-
   const todoListElement = createElement("div", "todo-list-container");
   const plusboxElement = createElement("div", "plus-box");
   const todoListTitle = createElement("h2", "", todoList.getListName());
@@ -70,6 +70,7 @@ function renderTodoItem(todoItem, index) {
   menuOpenElement.innerHTML = menuOpen;
   todoItemElement.dataset.todoItem = index;
   addToggleStatusEventListener(checkboxElement);
+  addTodoDialogEventListener(menuOpenElement);
   appendChildren(todoInfoElement, todoItemTitleElement, todoItemDescElement);
   appendChildren(
     todoItemElement,
@@ -112,17 +113,83 @@ function addCreateNewTodoEventListener(element) {
   });
 }
 
+function addTodoDialogEventListener(element) {
+  element.addEventListener("click", (event) => {
+    const todoItem = event.currentTarget.closest("[data-todo-item]");
+    const todoList = event.currentTarget.closest("[data-list]");
+    const dialogDelete = document.getElementById("dialogDelete");
+    dialogDelete.dataset.list = todoList.dataset.list;
+    dialogDelete.dataset.todoItem = todoItem.dataset.todoItem;
+
+    updateTodoDialog(todoList.dataset.list, todoItem.dataset.todoItem);
+    toggleTodoDialog();
+  });
+}
+
+function updateTodoDialog(listName, todoItem) {
+  const dialogTitle = document.getElementById("dialogTitle");
+  const dialogDate = document.querySelector("#dialogDate > span");
+  const dialogModifiedDate = document.querySelector(
+    "#dialogModifiedDate > span"
+  );
+  const dialogDesc = document.getElementById("dialogDesc");
+  const dialogPriority = document.querySelector("#dialogPriority > span");
+  const dialogStatus = document.querySelector("#dialogStatus > span");
+  const dialogDueDate = document.querySelector("#dialogDueDate > span");
+
+  const todo = todoListManager.getTodoFromList(listName, todoItem);
+
+  dialogTitle.textContent = todo.getTitle();
+  dialogDate.textContent = format(todo.getCreatedDate(), "dd/MM/yyyy");
+  dialogModifiedDate.textContent = format(
+    todo.getLastModifiedDate(),
+    "dd/MM/yyyy"
+  );
+  dialogDesc.textContent = todo.getDesc();
+  dialogPriority.textContent = todo.getPriority();
+  dialogStatus.textContent = todo.getStatus();
+  dialogDueDate.textContent = todo.getDueDate()
+    ? format(todo.getDueDate(), "dd/MM/yyyy")
+    : "";
+}
+
 function setListNameFormValue(value) {
   const listNameForm = document.getElementById("listNameForm");
   listNameForm.value = value;
 }
 
-function toggleNewTodoDiaglog() {
-  toggleElementDisplayBlock(document.getElementById("overlay"));
-  toggleElementDisplayBlock(document.getElementById("newTodoDialog"));
+function toggleNewTodoDiaglog(condition) {
+  const overlay = document.getElementById("overlay");
+  const newTodoDialog = document.getElementById("newTodoDialog");
+
+  if (!condition) {
+    toggleElementDisplayBlock(overlay);
+    toggleElementDisplayBlock(newTodoDialog);
+    return;
+  }
+
+  overlay.classList.add("hide");
+  newTodoDialog.classList.add("hide");
+}
+
+function toggleTodoDialog(condition) {
+  const overlay = document.getElementById("overlay");
+  const todoDialog = document.getElementById("todoDialog");
+
+  if (!condition) {
+    toggleElementDisplayBlock(overlay);
+    toggleElementDisplayGrid(todoDialog);
+    return;
+  }
+
+  overlay.classList.add("hide");
+  overlay.classList.remove("display-grid");
+  todoDialog.classList.add("hide");
+  todoDialog.classList.remove("display-grid");
 }
 
 (function initClickEventListener() {
+  // click listeners for creating new todo lists
   const content = document.getElementById("content");
   const plusboxMultiple = document.getElementById("plus-box-multiple");
   const newListName = "List #";
@@ -136,17 +203,14 @@ function toggleNewTodoDiaglog() {
     appendChildren(content, temp);
   });
 
+  // click listeners for getting data from a form to add new todo to a list
   const newTodoForm = document.getElementById("newTodoForm");
 
   document.getElementById("overlay").addEventListener("click", (event) => {
-    toggleNewTodoDiaglog();
+    toggleNewTodoDiaglog(true);
+    toggleTodoDialog(true);
     newTodoForm.reset();
   });
-
-  const dummyTodo = {
-    title: "Task 6",
-    desc: "This is my 6th Task!",
-  };
 
   document
     .querySelector("#newTodoDialog > form > button")
@@ -186,6 +250,23 @@ function toggleNewTodoDiaglog() {
         console.log(error);
       }
     });
+
+  // click listener to delete a todo
+  document.getElementById("dialogDelete").addEventListener("click", (event) => {
+    const listName = event.currentTarget.dataset.list;
+    const todoItem = event.currentTarget.dataset.todoItem;
+
+    console.log(todoListManager.getTodoList(listName));
+    todoListManager.removeTodoFromList(listName, todoItem);
+    // todoListManager.getTodoList(listName).splice(3, 1);
+    console.log(todoListManager.getTodoList(listName));
+
+    renderTodoLists();
+
+    console.log(todoItem);
+
+    toggleTodoDialog(true);
+  });
 })();
 
 export { renderTodoLists };

@@ -24,4 +24,14 @@ function toggleElementDisplayBlock(element) {
   element.classList.toggle("hide");
 }
 
-export { createElement, appendChildren, toggleElementDisplayBlock };
+function toggleElementDisplayGrid(element) {
+  element.classList.toggle("hide");
+  element.classList.toggle("display-grid");
+}
+
+export {
+  createElement,
+  appendChildren,
+  toggleElementDisplayBlock,
+  toggleElementDisplayGrid,
+};
