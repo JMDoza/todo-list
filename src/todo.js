@@ -79,14 +79,21 @@ function createTodoListManager() {
   const getTodoList = (listName) => todoLists.get(listName).getTodoList() || [];
 
   const addTodoList = (listName, listData) => {
-    validateTodoListDuplication(todoLists, listName);
-    todoLists.set(listName, createTodoList(listName, listData));
+    try {
+      validateTodoListDuplication(todoLists, listName);
+      todoLists.set(listName, createTodoList(listName, listData));
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const addTodoToList = (listName, todoData) => {
-    validateTodoListExistence(todoLists, listName);
-
-    todoLists.get(listName).addTodo(todoData);
+    try {
+      validateTodoListExistence(todoLists, listName);
+      todoLists.get(listName).addTodo(todoData);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const getTodoFromList = (listName, todoIndex) => {

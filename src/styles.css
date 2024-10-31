@@ -22,7 +22,8 @@ header > h1 {
   flex: 1;
 }
 
-#add-new-list {
+#plus-box-multiple {
+  cursor: pointer;
   fill: white;
   height: 60px;
 }
@@ -46,6 +47,7 @@ header > h1 {
 }
 
 .plus-box {
+  cursor: pointer;
   grid-column: 2/3;
   place-self: center;
 }
@@ -103,4 +105,27 @@ header > h1 {
 
 .todo-information > p {
   margin: 0;
+}
+
+#customDialog {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  background: white;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+#overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 500;
 }

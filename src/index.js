@@ -1,5 +1,5 @@
 import "./styles.css";
-import { renderTodoList } from "./render";
+import { renderTodoLists } from "./render";
 
 const listData = [
   { title: "Task 1", desc: "This is my 1st Task!" },
@@ -21,4 +21,4 @@ const listData = [
 
 console.log("Started");
 
-renderTodoList(listData);
+renderTodoLists(listData);

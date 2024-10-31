@@ -4,13 +4,12 @@ import { createElement, appendChildren } from "./domUtils";
 const todoListManager = createTodoListManager();
 const checkboxBlankSVG = `<svg class="check-box-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>checkbox-blank</title><path d="M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3Z" /></svg>`;
 const checkboxSVG = `<svg class="check-box-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>checkbox-marked</title><path d="M10,17L5,12L6.41,10.58L10,14.17L17.59,6.58L19,8M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3Z" /></svg>`;
+const plusBox = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>plus-box</title><path d="M17,13H13V17H11V13H7V11H11V7H13V11H17M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3Z" /></svg>`;
 
-function renderTodoList(listData) {
+function renderTodoLists(listData) {
   // getTodoLists, getTodoList, addTodoList, addTodoToList
   const content = document.getElementById("content");
   content.innerHTML = "";
-
-  const plusBox = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>plus-box</title><path d="M17,13H13V17H11V13H7V11H11V7H13V11H17M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3Z" /></svg>`;
 
   if (listData) {
     todoListManager.addTodoList("List 1", listData);
@@ -19,31 +18,34 @@ function renderTodoList(listData) {
 
   const todoLists = todoListManager.getTodoLists();
   for (const [key, todoList] of todoLists) {
-    console.log(key);
-    console.log(todoList);
-
-    const todoListElement = createElement("div", "todo-list-container");
-    const plusboxElement = createElement("div", "plus-box");
-    const todoListTitle = createElement("h2", "", todoList.getListName());
-    const todoItemsContainer = createElement("div", "todo-items-container");
-
-    const todoItems = todoList.getTodoList();
-    todoItems.forEach((todoItem, index) => {
-      const todoItemElement = renderTodoItem(todoItem, index);
-      appendChildren(todoItemsContainer, todoItemElement);
-    });
-
-    todoListElement.dataset.list = key;
-    plusboxElement.innerHTML = plusBox;
-    appendChildren(
-      todoListElement,
-      todoListTitle,
-      plusboxElement,
-      todoItemsContainer
-    );
-    addCreateNewTodoEventListener(plusboxElement);
-    appendChildren(content, todoListElement);
+    appendChildren(content, renderTodoList(key, todoList));
   }
+}
+
+function renderTodoList(key, todoList) {
+  console.log(todoList);
+
+  const todoListElement = createElement("div", "todo-list-container");
+  const plusboxElement = createElement("div", "plus-box");
+  const todoListTitle = createElement("h2", "", todoList.getListName());
+  const todoItemsContainer = createElement("div", "todo-items-container");
+
+  const todoItems = todoList.getTodoList();
+  todoItems.forEach((todoItem, index) => {
+    const todoItemElement = renderTodoItem(todoItem, index);
+    appendChildren(todoItemsContainer, todoItemElement);
+  });
+
+  todoListElement.dataset.list = key;
+  plusboxElement.innerHTML = plusBox;
+  appendChildren(
+    todoListElement,
+    todoListTitle,
+    plusboxElement,
+    todoItemsContainer
+  );
+  addCreateNewTodoEventListener(plusboxElement);
+  return todoListElement;
 }
 
 function renderTodoItem(todoItem, index) {
@@ -110,4 +112,22 @@ function addCreateNewTodoEventListener(element) {
   });
 }
 
-export { renderTodoList };
+(function addCreateNewTodoListEventListener() {
+  const content = document.getElementById("content");
+
+  const plusboxMultiple = document.getElementById("plus-box-multiple");
+
+  const newListName = "List #";
+
+  plusboxMultiple.addEventListener("click", (event) => {
+    todoListManager.addTodoList(newListName);
+
+    const temp = renderTodoList(
+      newListName,
+      todoListManager.getTodoLists().get(newListName)
+    );
+    appendChildren(content, temp);
+  });
+})();
+
+export { renderTodoLists };
