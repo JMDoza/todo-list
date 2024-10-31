@@ -52,6 +52,21 @@
       <p id="dialogDueDate">Due Date: <span>2025/10/10</span></p>
       <button id="dialogDelete">DELETE</button>
     </div>
+    <div id="newTodoListDialog" class="hide">
+      <h1 id="dialogTitle">New List</h1>
+      <form id="newTodoListForm" action="post">
+        <input
+          type="text"
+          id="inputListTitle"
+          placeholder="List Name"
+          name="listName"
+          required
+        />
+        <button type="submit" id="inputListSubmit">
+          <strong>Add List</strong>
+        </button>
+      </form>
+    </div>
     <div class="container">
       <header>
         <h1>Projects List</h1>

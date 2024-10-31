@@ -172,6 +172,20 @@ function toggleNewTodoDiaglog(condition) {
   newTodoDialog.classList.add("hide");
 }
 
+function toggleNewTodoListDiaglog(condition) {
+  const overlay = document.getElementById("overlay");
+  const newTodoListDialog = document.getElementById("newTodoListDialog");
+
+  if (!condition) {
+    toggleElementDisplayBlock(overlay);
+    toggleElementDisplayBlock(newTodoListDialog);
+    return;
+  }
+
+  overlay.classList.add("hide");
+  newTodoListDialog.classList.add("hide");
+}
+
 function toggleTodoDialog(condition) {
   const overlay = document.getElementById("overlay");
   const todoDialog = document.getElementById("todoDialog");
@@ -192,23 +206,19 @@ function toggleTodoDialog(condition) {
   // click listeners for creating new todo lists
   const content = document.getElementById("content");
   const plusboxMultiple = document.getElementById("plus-box-multiple");
-  const newListName = "List #";
   plusboxMultiple.addEventListener("click", (event) => {
-    todoListManager.addTodoList(newListName);
-
-    const temp = renderTodoList(
-      newListName,
-      todoListManager.getTodoLists().get(newListName)
-    );
-    appendChildren(content, temp);
+    toggleNewTodoListDiaglog();
   });
 
   // click listeners for getting data from a form to add new todo to a list
   const newTodoForm = document.getElementById("newTodoForm");
+  const newTodoListForm = document.getElementById("newTodoListForm");
 
+  // click listener to toggle overlay and dialogs off
   document.getElementById("overlay").addEventListener("click", (event) => {
     toggleNewTodoDiaglog(true);
     toggleTodoDialog(true);
+    toggleNewTodoListDiaglog(true);
     newTodoForm.reset();
   });
 
@@ -217,9 +227,16 @@ function toggleTodoDialog(condition) {
     .addEventListener("click", (event) => {
       try {
         event.preventDefault();
+
         if (!newTodoForm.checkValidity()) {
-          newTodoForm.reportValidity();
-          throw new Error("No Title");
+          try {
+            newTodoForm.reportValidity();
+            throw new Error("No Title");
+          } catch (error) {
+            console.log(error);
+            toggleNewTodoDiaglog(true);
+            return;
+          }
         }
 
         const formData = new FormData(newTodoForm);
@@ -249,6 +266,35 @@ function toggleTodoDialog(condition) {
       } catch (error) {
         console.log(error);
       }
+    });
+
+  document
+    .getElementById("inputListSubmit")
+    .addEventListener("click", (event) => {
+      event.preventDefault();
+
+      if (!newTodoListForm.checkValidity()) {
+        try {
+          newTodoListForm.reportValidity();
+          throw new Error("No List Name");
+        } catch (error) {
+          console.log(error);
+          return;
+        }
+      }
+
+      const formData = new FormData(newTodoListForm);
+      const newListName = formData.get("listName");
+
+      todoListManager.addTodoList(newListName);
+
+      const temp = renderTodoList(
+        newListName,
+        todoListManager.getTodoLists().get(newListName)
+      );
+
+      toggleNewTodoListDiaglog();
+      appendChildren(content, temp);
     });
 
   // click listener to delete a todo
