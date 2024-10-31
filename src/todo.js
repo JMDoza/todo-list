@@ -53,8 +53,10 @@ function createTodoItem({
   };
 }
 
-function createTodoList(listData) {
+function createTodoList(listName, listData) {
   let todoList = [];
+
+  const getListName = () => listName;
 
   const addTodo = (todoData) => todoList.push(createTodoItem(todoData));
 
@@ -66,25 +68,25 @@ function createTodoList(listData) {
     });
   }
 
-  return { addTodo, getTodoList, createTodoList };
+  return { getListName, addTodo, getTodoList, createTodoList };
 }
 
 function createTodoListManager() {
-  let todoLists = {};
+  let todoLists = new Map();
 
   const getTodoLists = () => todoLists;
 
-  const getTodoList = (listName) => todoLists[listName]?.getTodoList() || [];
+  const getTodoList = (listName) => todoLists.get(listName).getTodoList() || [];
 
   const addTodoList = (listName, listData) => {
     validateTodoListDuplication(todoLists, listName);
-    todoLists[listName] = createTodoList(listData);
+    todoLists.set(listName, createTodoList(listName, listData));
   };
 
   const addTodoToList = (listName, todoData) => {
     validateTodoListExistence(todoLists, listName);
 
-    todoLists[listName].addTodo(todoData);
+    todoLists.get(listName).addTodo(todoData);
   };
 
   return {

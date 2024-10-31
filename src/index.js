@@ -1,3 +1,4 @@
+import "./styles.css";
 import { renderTodoList } from "./render";
 
 const listData = [

@@ -9,13 +9,13 @@ function validateDueDate(dueDate) {
 }
 
 function validateTodoListDuplication(todoLists, listName) {
-  if (todoLists[listName]) {
+  if (todoLists.has(listName)) {
     throw new Error("Todo list already exists");
   }
 }
 
 function validateTodoListExistence(todoLists, listName) {
-  if (!todoLists[listName]) {
+  if (!todoLists.has(listName)) {
     throw new Error("Todo list does not exist");
   }
 }
