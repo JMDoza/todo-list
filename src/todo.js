@@ -27,7 +27,10 @@ function createTodoItem({
   const setPriority = (newPriority) => (priority = newPriority);
 
   const getStatus = () => status;
-  const toggleStatus = () => (status = !status);
+  const toggleStatus = () => {
+    status = !status;
+    updateLastModifiedDate();
+  };
 
   const getCreatedDate = () => createdDate;
   const getLastModifiedDate = () => lastModifiedDate;
@@ -87,6 +90,10 @@ function createTodoListManager() {
     }
   };
 
+  const deleteTodoList = (listName) => {
+    todoLists.delete(listName);
+  };
+
   const addTodoToList = (listName, todoData) => {
     try {
       validateTodoListExistence(todoLists, listName);
@@ -112,6 +119,7 @@ function createTodoListManager() {
     getTodoLists,
     getTodoList,
     addTodoList,
+    deleteTodoList,
     addTodoToList,
     removeTodoFromList,
     getTodoFromList,

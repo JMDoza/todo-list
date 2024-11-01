@@ -21,16 +21,24 @@ h1 {
 header {
   display: flex;
   align-items: center;
+  margin-top: 20px;
 }
 
 header > h1 {
   flex: 1;
 }
 
+#delete {
+  cursor: pointer;
+  fill: rgba(255, 0, 0, 0.753);
+  height: 48px;
+  margin-right: 8px;
+}
+
 #plus-box-multiple {
   cursor: pointer;
   fill: white;
-  height: 60px;
+  height: 48px;
 }
 
 #content {
@@ -146,6 +154,7 @@ header > h1 {
 
 #newTodoDialog,
 #newTodoListDialog,
+#deleteTodoListDialog,
 #todoDialog {
   position: fixed;
   top: 50%;
@@ -163,7 +172,8 @@ header > h1 {
 }
 
 #newTodoDialog > h1,
-#newTodoListDialog > h1 {
+#newTodoListDialog > h1,
+#deleteTodoListDialog > h1 {
   margin: 0;
   margin-bottom: 16px;
   border-bottom: 2px solid white;
@@ -192,7 +202,7 @@ form > button {
 
 #todoDialog {
   grid-template-columns: 1fr 1fr;
-  width: 350px;
+  width: 400px;
 }
 
 #todoDialog > h1 {
@@ -252,4 +262,28 @@ form > button {
 
 #newTodoListForm > button {
   justify-self: center;
+}
+
+#deleteTodoListDialog { 
+  width: 300px;
+}
+
+#deleteLists {
+  display: grid;
+  grid-auto-rows: 0fr;
+  gap: 16px;
+}
+
+.dialogLists {
+  display: flex;
+  align-items: center;
+}
+
+.dialogLists > h2 {
+  flex: 1;
+  margin: 0;
+  padding: 1px 10px;
+  border-top: 2px #64748b solid;
+  border-bottom: 2px #64748b solid;;
+  
 }

@@ -12,6 +12,7 @@ const checkboxBlankSVG = `<svg class="check-box-svg" xmlns="http://www.w3.org/20
 const checkboxSVG = `<svg class="check-box-svg checked" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>checkbox-marked</title><path d="M10,17L5,12L6.41,10.58L10,14.17L17.59,6.58L19,8M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3Z" /></svg>`;
 const plusBox = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>plus-box</title><path d="M17,13H13V17H11V13H7V11H11V7H13V11H17M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3Z" /></svg>`;
 const menuOpen = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>menu-open</title><path d="M21,15.61L19.59,17L14.58,12L19.59,7L21,8.39L17.44,12L21,15.61M3,6H16V8H3V6M3,13V11H13V13H3M3,18V16H16V18H3Z" /></svg>`;
+const deleteSVG = `<svg id="delete" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>delete</title><path d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" /></svg>`;
 
 function renderTodoLists(listData) {
   const content = document.getElementById("content");
@@ -21,6 +22,8 @@ function renderTodoLists(listData) {
   if (listData) {
     todoListManager.addTodoList("List 1", listData);
     todoListManager.addTodoList("List 2", listData);
+    todoListManager.addTodoList("List 3", listData);
+    todoListManager.addTodoList("List 4", listData);
   }
 
   const todoLists = todoListManager.getTodoLists();
@@ -186,6 +189,20 @@ function toggleNewTodoListDiaglog(condition) {
   newTodoListDialog.classList.add("hide");
 }
 
+function toggleDeleteTodoListDiaglog(condition) {
+  const overlay = document.getElementById("overlay");
+  const deleteTodoListDialog = document.getElementById("deleteTodoListDialog");
+
+  if (!condition) {
+    toggleElementDisplayBlock(overlay);
+    toggleElementDisplayBlock(deleteTodoListDialog);
+    return;
+  }
+
+  overlay.classList.add("hide");
+  deleteTodoListDialog.classList.add("hide");
+}
+
 function toggleTodoDialog(condition) {
   const overlay = document.getElementById("overlay");
   const todoDialog = document.getElementById("todoDialog");
@@ -202,12 +219,43 @@ function toggleTodoDialog(condition) {
   todoDialog.classList.remove("display-grid");
 }
 
+function populateDeleteDialog() {
+  const todoLists = todoListManager.getTodoLists();
+  const deleteLists = document.getElementById("deleteLists");
+  deleteLists.innerHTML = "";
+  for (const [key, todoList] of todoLists) {
+    const dialogLists = createElement("div", "dialogLists");
+    const title = createElement("h2");
+    const SVG = createElement("div");
+
+    title.textContent = key;
+    SVG.innerHTML = deleteSVG;
+
+    SVG.addEventListener("click", () => {
+      todoListManager.deleteTodoList(key);
+      toggleDeleteTodoListDiaglog();
+      renderTodoLists();
+    });
+
+    appendChildren(dialogLists, title, SVG);
+    appendChildren(deleteLists, dialogLists);
+  }
+}
+
 (function initClickEventListener() {
   // click listeners for creating new todo lists
   const content = document.getElementById("content");
   const plusboxMultiple = document.getElementById("plus-box-multiple");
   plusboxMultiple.addEventListener("click", (event) => {
     toggleNewTodoListDiaglog();
+  });
+
+  // Click Listener for deleting todo list
+  toggleDeleteTodoListDiaglog;
+  const deleteIcon = document.querySelector("header > #delete");
+  deleteIcon.addEventListener("click", (event) => {
+    toggleDeleteTodoListDiaglog();
+    populateDeleteDialog();
   });
 
   // click listeners for getting data from a form to add new todo to a list
@@ -219,7 +267,9 @@ function toggleTodoDialog(condition) {
     toggleNewTodoDiaglog(true);
     toggleTodoDialog(true);
     toggleNewTodoListDiaglog(true);
+    toggleDeleteTodoListDiaglog(true);
     newTodoForm.reset();
+    newTodoListForm.reset();
   });
 
   document
