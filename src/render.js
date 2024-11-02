@@ -21,9 +21,6 @@ function renderTodoLists(listData) {
 
   if (!localStorage.getItem("todoLists")) {
     todoListManager.addTodoList("List 1", listData);
-    todoListManager.addTodoList("List 2", listData);
-
-    todoListManager.save();
   } else {
     todoListManager.loadFromStorage();
   }
