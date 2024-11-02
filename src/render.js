@@ -222,7 +222,7 @@ function populateDeleteDialog() {
   const todoLists = todoListManager.getTodoLists();
   const deleteLists = document.getElementById("deleteLists");
   deleteLists.innerHTML = "";
-  for (const [key, todoList] of todoLists) {
+  for (const [key] of todoLists) {
     const dialogLists = createElement("div", "dialogLists");
     const title = createElement("h2");
     const SVG = createElement("div");
@@ -245,14 +245,14 @@ function populateDeleteDialog() {
   // click listeners for creating new todo lists
   const content = document.getElementById("content");
   const plusboxMultiple = document.getElementById("plus-box-multiple");
-  plusboxMultiple.addEventListener("click", (event) => {
+  plusboxMultiple.addEventListener("click", () => {
     toggleNewTodoListDiaglog();
   });
 
   // Click Listener for deleting todo list
   toggleDeleteTodoListDiaglog;
   const deleteIcon = document.querySelector("header > #delete");
-  deleteIcon.addEventListener("click", (event) => {
+  deleteIcon.addEventListener("click", () => {
     toggleDeleteTodoListDiaglog();
     populateDeleteDialog();
   });
@@ -262,7 +262,7 @@ function populateDeleteDialog() {
   const newTodoListForm = document.getElementById("newTodoListForm");
 
   // click listener to toggle overlay and dialogs off
-  document.getElementById("overlay").addEventListener("click", (event) => {
+  document.getElementById("overlay").addEventListener("click", () => {
     toggleNewTodoDiaglog(true);
     toggleTodoDialog(true);
     toggleNewTodoListDiaglog(true);

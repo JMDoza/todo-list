@@ -1,4 +1,4 @@
-import { parseISO, format } from "date-fns";
+import { parseISO } from "date-fns";
 import { saveData, loadData } from "./localStorage";
 import {
   validateDueDate,
