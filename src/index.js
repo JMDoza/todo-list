@@ -19,6 +19,4 @@ const listData = [
   },
 ];
 
-console.log("Started");
-
 renderTodoLists(listData);

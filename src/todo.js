@@ -1,4 +1,5 @@
 import { parseISO, format } from "date-fns";
+import { saveData, loadData } from "./localStorage";
 import {
   validateDueDate,
   validateTodoListDuplication,
@@ -81,10 +82,13 @@ function createTodoListManager() {
 
   const getTodoList = (listName) => todoLists.get(listName).getTodoList() || [];
 
-  const addTodoList = (listName, listData) => {
+  const addTodoList = (listName, listData, fromStorage) => {
     try {
       validateTodoListDuplication(todoLists, listName);
       todoLists.set(listName, createTodoList(listName, listData));
+      if (!fromStorage) {
+        saveData(todoLists);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -92,12 +96,14 @@ function createTodoListManager() {
 
   const deleteTodoList = (listName) => {
     todoLists.delete(listName);
+    saveData(todoLists);
   };
 
   const addTodoToList = (listName, todoData) => {
     try {
       validateTodoListExistence(todoLists, listName);
       todoLists.get(listName).addTodo(todoData);
+      saveData(todoLists);
     } catch (error) {
       console.log(error);
     }
@@ -105,6 +111,7 @@ function createTodoListManager() {
 
   const removeTodoFromList = (listName, todoItem) => {
     getTodoList(listName).splice(todoItem, 1);
+    saveData(todoLists);
   };
 
   const getTodoFromList = (listName, todoIndex) => {
@@ -113,6 +120,16 @@ function createTodoListManager() {
 
   const toggleStatusOfTodoFromList = (listName, todoIndex) => {
     getTodoFromList(listName, todoIndex).toggleStatus();
+    saveData(todoLists);
+  };
+
+  const loadFromStorage = () => {
+    todoLists.clear();
+    let todoListsStorage = loadData();
+
+    for (const [listName, listObject] of Object.entries(todoListsStorage)) {
+      addTodoList(listName, listObject, true);
+    }
   };
 
   return {
@@ -124,6 +141,7 @@ function createTodoListManager() {
     removeTodoFromList,
     getTodoFromList,
     toggleStatusOfTodoFromList,
+    loadFromStorage,
   };
 }
 

@@ -19,11 +19,13 @@ function renderTodoLists(listData) {
 
   content.innerHTML = "";
 
-  if (listData) {
+  if (!localStorage.getItem("todoLists")) {
     todoListManager.addTodoList("List 1", listData);
     todoListManager.addTodoList("List 2", listData);
-    todoListManager.addTodoList("List 3", listData);
-    todoListManager.addTodoList("List 4", listData);
+
+    todoListManager.save();
+  } else {
+    todoListManager.loadFromStorage();
   }
 
   const todoLists = todoListManager.getTodoLists();
@@ -365,4 +367,4 @@ function populateDeleteDialog() {
   });
 })();
 
-export { renderTodoLists };
+export { todoListManager, renderTodoLists };
